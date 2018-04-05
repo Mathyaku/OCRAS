@@ -10,7 +10,7 @@ import cv2
 from PIL import Image
 
 # Tipando a leitura para os canais de ordem RGB
-imagem = Image.open('Imagens de Teste/test5.jpg').convert('RGB')
+imagem = Image.open('Imagens de Teste/ocr5.jpg').convert('RGB')
 
 # Convertendo em um array editável de numpy[x, y, CANALS]
 npimagem = np.asarray(imagem).astype(np.uint8)  
