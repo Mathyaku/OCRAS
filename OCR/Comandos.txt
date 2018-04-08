@@ -1,0 +1,5 @@
+Como rodar os scripts de Python 3.6 no Anaconda Prompt
+
+python ocr_simples.py -i "Imagens de Teste/imagem.jpg" -o "Imagens de Teste/output.jpg"
+
+python deskew.py -i "Imagens de Teste/imagem.png" -o "Imagens de Teste/imagem.png"
