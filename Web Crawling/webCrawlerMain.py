@@ -6,5 +6,6 @@ Created on Wed Apr 11 15:21:37 2018
 """
 
 import get_academic_sources as service
+import extractContent as ec
 
-extractedReferences = service.findGoogleScholarReferences("test eu", 2, "googleAcademicOutput.json")
+extractedReferences = service.findGoogleScholarReferences("multivariate time series forecasting", 2, "googleAcademicOutput.json")
