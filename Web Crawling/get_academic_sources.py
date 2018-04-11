@@ -84,8 +84,6 @@ def storeInJson(extractedReferences, file):
 def getJsonReferences(file = "googleAcademicOutput.json"):
     return(json.load(open(file)))
 
-    
-   
 
 
 
