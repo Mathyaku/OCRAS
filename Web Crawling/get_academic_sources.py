@@ -6,24 +6,57 @@ Created on Sun Apr  8 13:48:19 2018
 """
 
 import requests
-url = "https://scholar.google.com.br/scholar?hl=pt-BR&as_sdt=0%2C5&q=test&btnG="
-page = requests.get(url)
-page.status_code
-page.content
+import json
 from bs4 import BeautifulSoup
-soup = BeautifulSoup(page.content, 'html.parser')
-print(soup.prettify())
+
+# SETUP
+
+def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicOutput.json"):
+    extractedReferences = []
+    
+    for page in range(nPages):
+        url = "https://scholar.google.com.br/scholar?start="+ str(page*10) +"&q="+ key.replace(" ", "+") +"&hl=pt-BR&as_sdt=0,5"
+        page = requests.get(url)
+        
+        if(page.status_code != 200):
+            return(dict([("references", []),("connection", 'failed')]))
+                
+        soup = BeautifulSoup(page.content, 'html.parser')
+        expectedReferences = soup.find_all('div', class_='gs_r gs_or gs_scl')
+        
+        
+        for reference in expectedReferences:
+            soup2 = BeautifulSoup(str(reference), 'html.parser')
+            try:
+                a = soup2.find_all('h3', class_='gs_rt')[0]
+                title = a.find_all('a')[0].get_text()
+                url = a.find_all('a', href=True)[0]['href']
+                author = soup2.find_all('div', class_='gs_a')[0].get_text()
+                description = soup2.find_all('div', class_='gs_rs')[0].get_text()
+                extractedReferences.append(dict([("title", title),("url", url),("author", author),("description", description)]))
+            except:
+                #print('error')
+                pass
+            
+    storeInJson(extractedReferences,file)
+    return(dict([("references", extractedReferences),("connection", 'failed')]))
+    
+
+#downloading and converting to JSON
+def storeInJson(extractedReferences, file):
+    with open(file, "w") as text_file:
+        text_file.write(json.dumps(extractedReferences))
+
+#opening the JSON
+def getJsonReferences(file = "googleAcademicOutput.json"):
+    return(json.load(open(file)))
+
+    
+   
 
 
-[type(item) for item in list(soup.children)]
-html = list(soup.children)[1]
 
 
-list(html.children)[1]
-len(list(html.children))
-a = soup.find_all('h3', class_='gs_rt')[0]
-title = a.find_all('a')[0].get_text()
-url = a.find_all('a', href=True)[0]['href']
 
 
 
