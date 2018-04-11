@@ -39,7 +39,7 @@ def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicO
                 pass
             
     storeInJson(extractedReferences,file)
-    return(dict([("references", extractedReferences),("connection", 'failed')]))
+    return(dict([("references", extractedReferences),("connection", 'success')]))
     
 
 #downloading and converting to JSON
