@@ -46,7 +46,6 @@ def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", l
     extractedReferences = []
     
     for page in range(nPages):
-        
         url = "https://search.scielo.org/?q="+ key.replace(" ", "+") +"&lang=en&count=10&from="+ str( (10*page)+1 )+"&output=site&sort=&format=summary&fb=&page=" + str(page+1) + "&where=&filter%5Bla%5D%5B%5D=" + language
         page = requests.get(url)
         
@@ -73,15 +72,12 @@ def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", l
     storeInJson(extractedReferences, file)
     return(dict([("references", extractedReferences),("source", "scielo"), ("connection", 'success')]))
         
-    
+
 def findLinkSpringerReferences(key = "test",nPages = 2, file = "linkSpringerOutput.json"):
     extractedReferences = []
-    nPages = 2
-    file = "linkSpringerOutput.json"
     for page in range(nPages):
         url = "https://link-springer-com.ez27.periodicos.capes.gov.br/search/page/"+ str(page) +"?query="+ key.replace(" ", "+") 
-        url = "https://link-springer-com.ez27.periodicos.capes.gov.br/search/page/1?query=multivariate+time+series+forecasting"
-        
+
         page = requests.get(url)
         
         if(page.status_code != 200):
