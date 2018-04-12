@@ -40,12 +40,13 @@ def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicO
     storeInJson(extractedReferences,file)
     return(dict([("references", extractedReferences),("source", "googleScholar"), ("connection", 'success')]))
 
-def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json"):
+
+# language can be 'pt' or 'en'
+def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", language = "pt"):
     extractedReferences = []
     
     for page in range(nPages):
-        
-        url = "https://search.scielo.org/?q="+ key.replace(" ", "+") +"&lang=en&count=10&from="+ str( (10*page)+1 )+"&output=site&sort=&format=summary&fb=&page=" + str(page+1) + "&where=&filter%5Bla%5D%5B%5D=pt&filter%5Bla%5D%5B%5D=en"
+        url = "https://search.scielo.org/?q="+ key.replace(" ", "+") +"&lang=en&count=10&from="+ str( (10*page)+1 )+"&output=site&sort=&format=summary&fb=&page=" + str(page+1) + "&where=&filter%5Bla%5D%5B%5D=" + language
         page = requests.get(url)
         
         if(page.status_code != 200):
@@ -56,63 +57,22 @@ def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json"):
         
         for reference in expectedReferences:
             soup2 = BeautifulSoup(str(reference), 'html.parser')
+            refId = soup2.find('div', class_='item').get("id")
             try:
                 a = soup2.find('div', class_='line')
                 title = soup2.find('strong', class_='title').get_text()
                 url = a.find('a', href=True)['href']
                 author = soup2.find('div', class_='line authors').get_text().replace("\n", "")
-                extractedReferences.append(dict([("title", title),("url", url),("author", author),("description", findScieloDescription(url))]))
+                description = soup2.find('div', {"id": refId+"_"+language}).get_text().replace("\n", "")
+                extractedReferences.append(dict([("title", title),("url", url),("author", author),("description", description)]))
             except:
-                #print('error')
+                print('error')
                 pass
             
     storeInJson(extractedReferences, file)
     return(dict([("references", extractedReferences),("source", "scielo"), ("connection", 'success')]))
- 
-def findScieloDescription(url):
-    page = requests.get(url)
-    if(page.status_code != 200):
-        return("")
-    else:
-        soup = BeautifulSoup(page.content, 'html.parser')
-        description = soup.find_all('div', class_='abstract')[0].get_text()
-        return(description.replace("\n", ""))
         
-def findAcademicMicrosoftReferences(key = "test",nPages = 2, file = "linkAcademicMicrosoft.json"):
-    extractedReferences = []
-nPages = 2
-file = "linkAcademicMicrosoft.json"
-for page in range(nPages):
-    #url = "https://academic.microsoft.com/#/search?iq=%40"+ key.replace(" ", "%20") + "%40&q=" + key.replace(" ", "%20") + '&filters=&from=' + str((page-1)*8) +"&sort=0"
-url = "https://academic.microsoft.com/#/search?iq=%40test%40&q=test&filters=&from=0&sort=0"
 
-page = requests.get(url)
-
-if(page.status_code != 200):
-    #return(dict([("references", []),("connection", 'failed')]))
-    pass
-        
-soup = BeautifulSoup(page.content, 'html.parser')
-expectedReferences = soup.find_all('article')
-    
-    for reference in expectedReferences:
-        try:
-            title = reference.find('a', class_='title').get_text()
-            url = reference.find('a', class_='title')['href']
-            author = reference.find('span', class_='authors').get_text().replace('\n',' ').replace('  ','')
-            description = reference.find('p', class_='snippet').get_text().replace('\n',' ').replace('  ','')
-            extractedReferences.append(dict([("title", title),
-                                             ("url",  'https://link-springer-com.ez27.periodicos.capes.gov.br' + url),
-                                             ("author", author),
-                                             ("description", description)]))
-        except:
-            #print('error')
-            pass
-                    
-storeInJson(extractedReferences,file)
-    return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
-
-    
 def findLinkSpringerReferences(key = "test",nPages = 2, file = "linkSpringerOutput.json"):
     extractedReferences = []
     for page in range(nPages):
@@ -154,6 +114,39 @@ def getJsonReferences(file = "googleAcademicOutput.json"):
 
 
 
+#def findAcademicMicrosoftReferences(key = "test",nPages = 2, file = "linkAcademicMicrosoft.json"):
+#    extractedReferences = []
+#nPages = 2
+#file = "linkAcademicMicrosoft.json"
+#for page in range(nPages):
+#    #url = "https://academic.microsoft.com/#/search?iq=%40"+ key.replace(" ", "%20") + "%40&q=" + key.replace(" ", "%20") + '&filters=&from=' + str((page-1)*8) +"&sort=0"
+#url = "https://academic.microsoft.com/#/search?iq=%40test%40&q=test&filters=&from=0&sort=0"
+#
+#page = requests.get(url)
+#
+#if(page.status_code != 200):
+#    #return(dict([("references", []),("connection", 'failed')]))
+#    pass
+#        
+#soup = BeautifulSoup(page.content, 'html.parser')
+#expectedReferences = soup.find_all('article')
+#    
+#    for reference in expectedReferences:
+#        try:
+#            title = reference.find('a', class_='title').get_text()
+#            url = reference.find('a', class_='title')['href']
+#            author = reference.find('span', class_='authors').get_text().replace('\n',' ').replace('  ','')
+#            description = reference.find('p', class_='snippet').get_text().replace('\n',' ').replace('  ','')
+#            extractedReferences.append(dict([("title", title),
+#                                             ("url",  'https://link-springer-com.ez27.periodicos.capes.gov.br' + url),
+#                                             ("author", author),
+#                                             ("description", description)]))
+#        except:
+#            #print('error')
+#            pass
+#                    
+#storeInJson(extractedReferences,file)
+#    return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
 
 
 
