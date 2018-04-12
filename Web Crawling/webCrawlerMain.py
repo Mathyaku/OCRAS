@@ -9,3 +9,4 @@ import get_academic_sources as service
 import extractContent as ec
 
 extractedReferences = service.findLinkSpringerReferences("multivariate time series forecasting", 2)
+all_1 = ec.get_content(extractedReferences['references'], extractedReferences['source'] )
