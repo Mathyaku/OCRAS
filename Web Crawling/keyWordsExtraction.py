@@ -7,7 +7,7 @@ Created on Wed May  9 19:51:43 2018
 
 from rake_nltk import Rake
 
-def GetRelevanteKeyWords(text, language):
+def GetRelevanteKeyWords(text, quantity, language):
     
     r = Rake(language=language)
     
@@ -25,14 +25,14 @@ def GetRelevanteKeyWords(text, language):
     
     keyWordsSorted = sorted(teste.items(), key=lambda x: x[1], reverse = True)
     
-    keyWordsRelevante = [x[0] for x in keyWordsSorted[0:5]]
+    keyWordsRelevante = [x[0] for x in keyWordsSorted[0:quantity]]
     
     return {'keywords': keyWordsRelevante, 'result': keyWordsSorted}
 
 
 
 text = "cry The Project MATHEUS Matheus Gutenberg EBook of  a a a a a a cry matheus Crime and Punishment, cry by  MATHEUS Matheus Fyodor Dostoevsky\r\n"
-keyWordsExtraction = GetRelevanteKeyWords(text, "english")  # portuguese or english
+keyWordsExtraction = GetRelevanteKeyWords(text, 5, "english")  # portuguese or english
 
 keyWordsExtraction['keywords']
 keyWordsExtraction['result']
