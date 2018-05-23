@@ -9,6 +9,10 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
+import urllib2
+import httplib2
+
+
 # SETUP
 
 def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicOutput.json"):
@@ -113,40 +117,45 @@ def getJsonReferences(file = "googleAcademicOutput.json"):
 
 
 
+import httplib2
+def findAcademicMicrosoftReferences(key = "test",nPages = 2, file = "linkAcademicMicrosoft.json"):
+    extractedReferences = []
+nPages = 2
+file = "linkAcademicMicrosoft.json"
+for page in range(nPages):
+    #url = "https://academic.microsoft.com/#/search?iq=%40"+ key.replace(" ", "%20") + "%40&q=" + key.replace(" ", "%20") + '&filters=&from=' + str((page-1)*8) +"&sort=0"
+url = "https://academic.microsoft.com/#/search?iq=%40test%40&q=test&filters=&from=0&sort=0"
 
-#def findAcademicMicrosoftReferences(key = "test",nPages = 2, file = "linkAcademicMicrosoft.json"):
-#    extractedReferences = []
-#nPages = 2
-#file = "linkAcademicMicrosoft.json"
-#for page in range(nPages):
-#    #url = "https://academic.microsoft.com/#/search?iq=%40"+ key.replace(" ", "%20") + "%40&q=" + key.replace(" ", "%20") + '&filters=&from=' + str((page-1)*8) +"&sort=0"
-#url = "https://academic.microsoft.com/#/search?iq=%40test%40&q=test&filters=&from=0&sort=0"
-#
-#page = requests.get(url)
-#
-#if(page.status_code != 200):
-#    #return(dict([("references", []),("connection", 'failed')]))
-#    pass
-#        
-#soup = BeautifulSoup(page.content, 'html.parser')
-#expectedReferences = soup.find_all('article')
-#    
-#    for reference in expectedReferences:
-#        try:
-#            title = reference.find('a', class_='title').get_text()
-#            url = reference.find('a', class_='title')['href']
-#            author = reference.find('span', class_='authors').get_text().replace('\n',' ').replace('  ','')
-#            description = reference.find('p', class_='snippet').get_text().replace('\n',' ').replace('  ','')
-#            extractedReferences.append(dict([("title", title),
-#                                             ("url",  'https://link-springer-com.ez27.periodicos.capes.gov.br' + url),
-#                                             ("author", author),
-#                                             ("description", description)]))
-#        except:
-#            #print('error')
-#            pass
-#                    
-#storeInJson(extractedReferences,file)
-#    return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
+h = httplib2.Http("/tmp/httplib2")
+resp, content = h.request(url)
+
+soup = BeautifulSoup(content, 'html.parser')
+        
+page = requests.get(url)
+
+if(page.status_code != 200):
+    #return(dict([("references", []),("connection", 'failed')]))
+    pass
+        
+soup = BeautifulSoup(page.content, 'html.parser')
+expectedReferences = soup.find_all('article')
+    
+    for reference in expectedReferences:
+        try:
+            title = reference.find('a', class_='title').get_text()
+            url = reference.find('a', class_='title')['href']
+            author = reference.find('span', class_='authors').get_text().replace('\n',' ').replace('  ','')
+            description = reference.find('p', class_='snippet').get_text().replace('\n',' ').replace('  ','')
+            extractedReferences.append(dict([("title", title),
+                                             ("url",  'https://link-springer-com.ez27.periodicos.capes.gov.br' + url),
+                                             ("author", author),
+                                             ("description", description)]))
+        except:
+            #print('error')
+            pass
+                    
+storeInJson(extractedReferences,file)
+    return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
 
 
 
