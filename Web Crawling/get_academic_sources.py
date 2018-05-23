@@ -102,6 +102,38 @@ def findLinkSpringerReferences(key = "test",nPages = 2, file = "linkSpringerOutp
     storeInJson(extractedReferences,file)
     return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
 
+
+
+def findPubmed(key = "bird Health",nPages = 2, file = "pubmedOutput.json"):
+    extractedReferences = []
+    for page in range(nPages):
+        url = "https://www.ncbi.nlm.nih.gov/pubmed/?term="+ str(page) +"?query="+ key.replace(" ", "+") 
+        page = requests.get(url)
+        bird+health
+        if(page.status_code != 200):
+            return(dict([("references", []),("connection", 'failed')]))
+                
+        soup = BeautifulSoup(page.content, 'html.parser')
+        expectedReferences = soup.find('ol').find_all('li')
+        
+        for reference in expectedReferences:
+            try:
+                title = reference.find('a', class_='title').get_text()
+                url = reference.find('a', class_='title')['href']
+                author = reference.find('span', class_='authors').get_text().replace('\n',' ').replace('  ','')
+                description = reference.find('p', class_='snippet').get_text().replace('\n',' ').replace('  ','')
+                extractedReferences.append(dict([("title", title),
+                                                 ("url",  'https://link-springer-com.ez27.periodicos.capes.gov.br' + url),
+                                                 ("author", author),
+                                                 ("description", description)]))
+            except:
+                #print('error')
+                pass
+                        
+    storeInJson(extractedReferences,file)
+    return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
+
+
 #downloading and converting to JSON
 def storeInJson(extractedReferences, file):
     with open(file, "w") as text_file:
