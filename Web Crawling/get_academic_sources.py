@@ -8,18 +8,17 @@ Created on Sun Apr  8 13:48:19 2018
 import requests
 import json
 from bs4 import BeautifulSoup
-
-import urllib2
+#import urllib2
 import httplib2
 
-
 # SETUP
-
-def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicOutput.json"):
+def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicOutput.json", language = "portuguese"):
     extractedReferences = []
     
+    dict_languages = {'portuguese': 'pt-br', 'english': 'en-us'}
     for page in range(nPages):
-        url = "https://scholar.google.com.br/scholar?start="+ str(page*10) +"&q="+ key.replace(" ", "+") +"&hl=pt-BR&as_sdt=0,5"
+        url = "https://scholar.google.com.br/scholar?start="+ str(page*10) +"&q="+ key.replace(" ", "+") +"&hl=" \
+        + dict_languages.get(language) + "&as_sdt=0,5"
         page = requests.get(url)
         
         if(page.status_code != 200):
@@ -46,28 +45,37 @@ def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicO
 
 
 # language can be 'pt' or 'en'
-def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", language = "pt"):
+def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", language = "portuguese"):
+    print("Get scielo References")
+    dict_languages = {'portuguese': 'pt', 'english': 'en'}
     extractedReferences = []
     
     for page in range(nPages):
-        url = "https://search.scielo.org/?q="+ key.replace(" ", "+") +"&lang=en&count=10&from="+ str( (10*page)+1 )+"&output=site&sort=&format=summary&fb=&page=" + str(page+1) + "&where=&filter%5Bla%5D%5B%5D=" + language
+        url = "https://search.scielo.org/?q="+ key.replace(" ", "+") +"&lang=en&count=10&from="+ str( (10*page)+1 )+ \
+              "&output=site&sort=&format=summary&fb=&page=" + str(page+1) + "&where=&filter%5Bla%5D%5B%5D=" + \
+              dict_languages.get(language, 'pt')
+        print("Search Url: {}".format(url))
+        url = "https://search.scielo.org/?q=test&lang=en&count=10&from=1&output=site&sort=&format=summary&fb=&page=1&where=&filter%5Bla%5D%5B%5D=en"
         page = requests.get(url)
         
-        if(page.status_code != 200):
-            return(dict([("references", []),("connection", 'failed')]))
-                
+#        if(page.status_code != 200):
+#            return(dict([("references", []),("connection", 'failed')]))
+#                
         soup = BeautifulSoup(page.content, 'html.parser')
         expectedReferences = soup.find_all('div', class_='item')
         
         for reference in expectedReferences:
             soup2 = BeautifulSoup(str(reference), 'html.parser')
             refId = soup2.find('div', class_='item').get("id")
+            print("Id: {}".format(refId))
             try:
                 a = soup2.find('div', class_='line')
                 title = soup2.find('strong', class_='title').get_text()
                 url = a.find('a', href=True)['href']
                 author = soup2.find('div', class_='line authors').get_text().replace("\n", "")
-                description = soup2.find('div', {"id": refId+"_"+language}).get_text().replace("\n", "")
+                id_1 = refId+"_"+dict_languages.get(language, 'pt')
+                print("ID to be found: {}".format(id_1))
+                description = soup2.find('div', {"id": id_1}).get_text().replace("\n", "")
                 extractedReferences.append(dict([("title", title),("url", url),("author", author),("description", description)]))
             except:
                 print('error')
@@ -77,7 +85,7 @@ def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", l
     return(dict([("references", extractedReferences),("source", "scielo"), ("connection", 'success')]))
         
 
-def findLinkSpringerReferences(key = "test",nPages = 2, file = "linkSpringerOutput.json"):
+def findLinkSpringerReferences(key = "test",nPages = 2, file = "linkSpringerOutput.json", language="pt"):
     extractedReferences = []
     for page in range(nPages):
         url = "https://link-springer-com.ez27.periodicos.capes.gov.br/search/page/"+ str(page) +"?query="+ key.replace(" ", "+") 
@@ -152,26 +160,26 @@ def getJsonReferences(file = "googleAcademicOutput.json"):
 import httplib2
 def findAcademicMicrosoftReferences(key = "test",nPages = 2, file = "linkAcademicMicrosoft.json"):
     extractedReferences = []
-nPages = 2
-file = "linkAcademicMicrosoft.json"
-for page in range(nPages):
-    #url = "https://academic.microsoft.com/#/search?iq=%40"+ key.replace(" ", "%20") + "%40&q=" + key.replace(" ", "%20") + '&filters=&from=' + str((page-1)*8) +"&sort=0"
-url = "https://academic.microsoft.com/#/search?iq=%40test%40&q=test&filters=&from=0&sort=0"
-
-h = httplib2.Http("/tmp/httplib2")
-resp, content = h.request(url)
-
-soup = BeautifulSoup(content, 'html.parser')
-        
-page = requests.get(url)
-
-if(page.status_code != 200):
-    #return(dict([("references", []),("connection", 'failed')]))
-    pass
-        
-soup = BeautifulSoup(page.content, 'html.parser')
-expectedReferences = soup.find_all('article')
+    nPages = 2
+    file = "linkAcademicMicrosoft.json"
+    for page in range(nPages):
+        url = "https://academic.microsoft.com/#/search?iq=%40"+ key.replace(" ", "%20") + "%40&q=" + key.replace(" ", "%20") + '&filters=&from=' + str((page-1)*8) +"&sort=0"
+    #url = "https://academic.microsoft.com/#/search?iq=%40test%40&q=test&filters=&from=0&sort=0"
     
+    h = httplib2.Http("/tmp/httplib2")
+    resp, content = h.request(url)
+    
+    soup = BeautifulSoup(content, 'html.parser')
+            
+    page = requests.get(url)
+    
+    if(page.status_code != 200):
+        #return(dict([("references", []),("connection", 'failed')]))
+        pass
+            
+    soup = BeautifulSoup(page.content, 'html.parser')
+    expectedReferences = soup.find_all('article')
+        
     for reference in expectedReferences:
         try:
             title = reference.find('a', class_='title').get_text()
@@ -186,7 +194,7 @@ expectedReferences = soup.find_all('article')
             #print('error')
             pass
                     
-storeInJson(extractedReferences,file)
+    storeInJson(extractedReferences,file)
     return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
 
 
