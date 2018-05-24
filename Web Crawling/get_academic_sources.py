@@ -40,7 +40,7 @@ def findGoogleScholarReferences(key = "test",nPages = 2, file = "googleAcademicO
                 #print('error')
                 pass
             
-    storeInJson(extractedReferences,file)
+#    storeInJson(extractedReferences,file)
     return(dict([("references", extractedReferences),("source", "googleScholar"), ("connection", 'success')]))
 
 
@@ -54,13 +54,11 @@ def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", l
         url = "https://search.scielo.org/?q="+ key.replace(" ", "+") +"&lang=en&count=10&from="+ str( (10*page)+1 )+ \
               "&output=site&sort=&format=summary&fb=&page=" + str(page+1) + "&where=&filter%5Bla%5D%5B%5D=" + \
               dict_languages.get(language, 'pt')
-        print("Search Url: {}".format(url))
-        url = "https://search.scielo.org/?q=test&lang=en&count=10&from=1&output=site&sort=&format=summary&fb=&page=1&where=&filter%5Bla%5D%5B%5D=en"
         page = requests.get(url)
         
-#        if(page.status_code != 200):
-#            return(dict([("references", []),("connection", 'failed')]))
-#                
+        if(page.status_code != 200):
+            return(dict([("references", []),("connection", 'failed')]))
+                
         soup = BeautifulSoup(page.content, 'html.parser')
         expectedReferences = soup.find_all('div', class_='item')
         
@@ -74,14 +72,13 @@ def findScieloReferences(key = "test", nPages = 2, file = "scieloOutput.json", l
                 url = a.find('a', href=True)['href']
                 author = soup2.find('div', class_='line authors').get_text().replace("\n", "")
                 id_1 = refId+"_"+dict_languages.get(language, 'pt')
-                print("ID to be found: {}".format(id_1))
                 description = soup2.find('div', {"id": id_1}).get_text().replace("\n", "")
                 extractedReferences.append(dict([("title", title),("url", url),("author", author),("description", description)]))
             except:
                 print('error')
                 pass
             
-    storeInJson(extractedReferences, file)
+#    storeInJson(extractedReferences, file)
     return(dict([("references", extractedReferences),("source", "scielo"), ("connection", 'success')]))
         
 
@@ -89,6 +86,7 @@ def findLinkSpringerReferences(key = "test",nPages = 2, file = "linkSpringerOutp
     extractedReferences = []
     for page in range(nPages):
         url = "https://link-springer-com.ez27.periodicos.capes.gov.br/search/page/"+ str(page) +"?query="+ key.replace(" ", "+") 
+        print(url)
         page = requests.get(url)
         
         if(page.status_code != 200):
@@ -111,39 +109,40 @@ def findLinkSpringerReferences(key = "test",nPages = 2, file = "linkSpringerOutp
                 #print('error')
                 pass
                         
-    storeInJson(extractedReferences,file)
+#    storeInJson(extractedReferences,file)
     return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
 
 
 
-def findPubmed(key = "bird Health",nPages = 2, file = "pubmedOutput.json"):
+def findPubmed(key = "bird Health",nPages = 2, file = "pubmedOutput.json" , language="pt"):
     extractedReferences = []
     for page in range(nPages):
         url = "https://www.ncbi.nlm.nih.gov/pubmed/?term="+ str(page) +"?query="+ key.replace(" ", "+") 
         page = requests.get(url)
-        bird+health
+
         if(page.status_code != 200):
             return(dict([("references", []),("connection", 'failed')]))
                 
         soup = BeautifulSoup(page.content, 'html.parser')
-        expectedReferences = soup.find('ol').find_all('li')
+        expectedReferences = soup.find_all('div', class_='rslt')
         
         for reference in expectedReferences:
-            try:
-                title = reference.find('a', class_='title').get_text()
-                url = reference.find('a', class_='title')['href']
-                author = reference.find('span', class_='authors').get_text().replace('\n',' ').replace('  ','')
+#            try:
+                title = reference.find('p', class_='title').get_text()
+                print(reference.find('p', class_='title'))
+                url = reference.find('p', class_='title')['href']
+                author = reference.find('span', class_='desc').get_text().replace('\n',' ').replace('  ','')
                 description = reference.find('p', class_='snippet').get_text().replace('\n',' ').replace('  ','')
-                extractedReferences.append(dict([("title", title),
-                                                 ("url",  'https://link-springer-com.ez27.periodicos.capes.gov.br' + url),
-                                                 ("author", author),
-                                                 ("description", description)]))
-            except:
-                #print('error')
-                pass
+#                extractedReferences.append(dict([("title", title),
+#                                                 ("url",  'https://link-springer-com.ez27.periodicos.capes.gov.br' + url),
+#                                                 ("author", author),
+#                                                 ("description", description)]))
+#            except:
+#                print('error')
+#                pass
                         
-    storeInJson(extractedReferences,file)
-    return(dict([("references", extractedReferences),("source", "linkSpringer"),("connection", 'success')]))
+#    storeInJson(extractedReferences,file)
+    return(dict([("references", extractedReferences),("source", "pubMed"),("connection", 'success')]))
 
 
 #downloading and converting to JSON
