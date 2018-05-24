@@ -27,23 +27,23 @@ def get_pdf_content(url = '' ):
     if(page.status_code != 200):
         return(dict([("content",'' ),("status", 'failed')]))
 
-    return(dict([("content", content),("status", 'failed')]))
+    return(dict([("content", content),("status", 'success')]))
 
 
 def get_site_content(url = '', source="linkSpringer"):
-source="linkSpringer"
-url = 'https://link-springer-com.ez27.periodicos.capes.gov.br/chapter/10.1007/978-3-642-57678-2_63'
-content = '' 
-page = requests.get(url)
+    source="linkSpringer"
+    url = 'https://link-springer-com.ez27.periodicos.capes.gov.br/chapter/10.1007/978-3-642-57678-2_63'
+    content = '' 
+    page = requests.get(url)
+        
+    if(page.status_code != 200):
+        return(dict([("content",''),("status", 'failed')]))
     
-if(page.status_code != 200):
-    return(dict([("content",''),("status", 'failed')]))
-
-soup = BeautifulSoup(page.content, 'html.parser')
-if(source == "linkSpringer"):
-    try:
-        content = soup.find('section', class_='Abstract').get_text().replace('Abstract', '')
-    except:
-        pass
-
-    return(dict([("content", content),("status", 'failed')]))
+    soup = BeautifulSoup(page.content, 'html.parser')
+    if(source == "linkSpringer"):
+        try:
+            content = soup.find('section', class_='Abstract').get_text().replace('Abstract', '')
+        except:
+            pass
+    
+        return(dict([("content", content),("status", 'success')]))
