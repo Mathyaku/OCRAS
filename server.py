@@ -4,7 +4,7 @@ Created on Wed Jun  6 19:47:28 2018
 
 @author: Matheus
 """
-from OCR import *
+from OCR import ocr
 from WebCrawling import reference_services
 from bottle import route, run, template, request
 import time
@@ -16,12 +16,18 @@ def index(name):
 
 @route('/img/extractText', 'POST')
 def index():
+    print("oi")
     init = time.time()   
     data = request.body.read()
+    data = json.loads(data.decode())
+    img_name = data.get('name', None)
+    path = 'C:/Users/Matheus/Downloads/'
+    print(img_name)
+    print(path)
+    result = ocr.imgToText(path+img_name, path, 'pt-br')
+    print(result)
     
-    bin_img = data.get('img', None)
-    
-    if(bin_img == None):
+    if(img_name == None):
         return {'status': 'failed', 'result':'', 'time': time.time() - init}
     else:
         return {'status': 'sucess', 'result': '', 'time': time.time() - init}
@@ -45,5 +51,5 @@ def index():
         return {'status': 'sucess', 'result': reference_services.get_results(text, language = lang ), 'time': time.time() - init}
 
 
-run(host='localhost', port=8080)
+run(host='localhost', port=8888)
 

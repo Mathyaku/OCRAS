@@ -10,10 +10,7 @@ Vue.use(Vuex)
 export const store = new Vuex.Store({
   state () {
     return {
-      baseUrl: 'https://api-frontendchallenge.buildstaging.com/',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      baseUrl: 'http://localhost:8888/img/'
     }
   },
   modules: {

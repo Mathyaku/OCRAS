@@ -24,7 +24,7 @@ export const OCRAS = {
   },
   actions: {
     getTextFromImage ({ commit, rootState }, image) {
-      sharedAxios.get(rootState.baseUrl + 'textFromImage', image)
+      sharedAxios.post(rootState.baseUrl + 'extractText', image , { headers: {'content-Type': 'application/x-www-form-urlencoded' } })
         .then(response => {
           commit('setExtractedData', response.data)
         })
@@ -33,7 +33,7 @@ export const OCRAS = {
         })
     },
     getReferencesFromText ({ commit, rootState }, textInfo) {
-      sharedAxios.get(rootState.baseUrl + 'referencesFromText', textInfo)
+      sharedAxios.get(rootState.baseUrl + 'extractReferences', textInfo, { headers: {'content-Type': 'application/x-www-form-urlencoded' } })
         .then(response => {
           commit('setReferences', response.data)
         })
