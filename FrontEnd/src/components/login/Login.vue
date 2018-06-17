@@ -7,9 +7,9 @@
         <br>
 			</a>
 			<div style="font-weight: bold; display: -webkit-box; margin-top: 10px;">Email</div>
-			<el-input type="text" v-model="email" placeholder="email@domínio.com" auto-complete="off"></el-input>
+			<el-input type="text" @keyup.enter.native="submitLogin" v-model="email" placeholder="email@domínio.com" auto-complete="off"></el-input>
 			<div style="font-weight: bold; display: -webkit-box; margin-top: 8px;">Senha</div>
-			<el-input type="password" v-model="password" auto-complete="off"></el-input>
+			<el-input type="password" @keyup.enter.native="submitLogin" v-model="password" auto-complete="off"></el-input>
 		</div>
 		<div style="margin-top: 20px; width: 100%;">
 			<el-button @click="submitLogin" type="primary">LOGIN</el-button>
