@@ -4,7 +4,7 @@ import { Loading } from 'element-ui'
 
 let axiosInstance = axios.create({
   baseUrl: 'http://localhost:8888/img/',
-  timeout: 60000,
+  timeout: 100000,
   headers: {
     'Content-Type': 'application/json'
   }

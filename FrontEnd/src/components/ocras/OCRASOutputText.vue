@@ -6,7 +6,7 @@
         :autosize="{ minRows: 15, maxRows: 15}"
         placeholder="Texto extraído"
         disabled
-        v-model="outputText">
+        v-model="extractedData.result">
       </el-input>
     </el-row>
     <el-row>
@@ -25,6 +25,7 @@
 <script>
 
 import jsPDF from 'jspdf'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -33,11 +34,14 @@ export default {
       correctText: ''
     }
   },
+  computed: {
+    ...mapGetters('ocras', ['extractedData'])
+  },
   methods: {
     generatePDF () {
       // eslint-disable-next-line
       var doc = jsPDF()
-      doc.text('Hello world!', 10, 10)
+      doc.text(this.extractedData.result, 10, 10)
       doc.save('Relatório.pdf')
     }
   }

@@ -6,7 +6,7 @@ export const OCRAS = {
   namespaced: true,
   state () {
     return {
-      extractedData: {result: '', time: null},
+      extractedData: {},
       references: []
     }
   },
@@ -33,7 +33,7 @@ export const OCRAS = {
         })
     },
     getReferencesFromText ({ commit, rootState }, textInfo) {
-      sharedAxios.get(rootState.baseUrl + 'extractReferences', textInfo, { headers: {'content-Type': 'application/x-www-form-urlencoded' } })
+      sharedAxios.post(rootState.baseUrl + 'extractReferences', textInfo, { headers: {'content-Type': 'application/x-www-form-urlencoded' } })
         .then(response => {
           commit('setReferences', response.data)
         })

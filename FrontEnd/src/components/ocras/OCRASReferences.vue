@@ -1,6 +1,7 @@
 <template>
   <div>
-    <!-- <el-collapse v-model="activeNames" @change="handleChange">
+    <!-- v-model="activeNames" @change="handleChange" -->
+    <el-collapse >
       <el-collapse-item title="Consistency" name="1">
         <div>Consistent with real life: in line with the process and logic of real life, and comply with languages and habits that the users are used to;</div>
         <div>Consistent within interface: all elements should be consistent, such as: design style, icons and texts, position of elements, etc.</div>
@@ -18,7 +19,7 @@
         <div>Decision making: giving advices about operations is acceptable, but do not make decisions for the users;</div>
         <div>Controlled consequences: users should be granted the freedom to operate, including canceling, aborting or terminating current operation.</div>
       </el-collapse-item>
-    </el-collapse> -->
+    </el-collapse>
   </div>
 </template>
 <script>
