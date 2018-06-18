@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
 
   data () {
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     ...mapActions('ocras', ['getTextFromImage']),
-    handleAvatarSuccess(res, file) {
+    handleAvatarSuccess (res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
     },
     handleRemove (file, fileList) {
@@ -58,11 +58,21 @@ export default {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
+    getText () {
+      let imgName = this.dialogImageUrl.split('/').slice(-1).pop() + '.png'
+      this.getTextFromImage({name: imgName})
+    },
+    download () {
+      document.getElementById('downloadImg').click()
+      setTimeout(this.getText, 1500)
+    },
     submitUpload () {
-      document.getElementById("downloadImg").click()
-      let imgName = this.dialogImageUrl.split('/').slice(-1).pop() + '.jpg'
-      this.getTextFromImage({name:imgName})
-      // this.$refs.upload.submit()
+      if (this.$refs.upload.uploadFiles.length > 0) {
+        this.dialogImageUrl = this.$refs.upload.uploadFiles[0].url
+        setTimeout(this.download, 500)
+      } else {
+        this.$message.warning(`Selecione uma imagem!`)
+      }
     },
     handleExceed (files, fileList) {
       console.log(fileList)

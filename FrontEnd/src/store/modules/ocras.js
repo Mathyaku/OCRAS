@@ -7,7 +7,7 @@ export const OCRAS = {
   state () {
     return {
       extractedData: {},
-      references: []
+      references: undefined
     }
   },
   getters: {
@@ -24,17 +24,20 @@ export const OCRAS = {
   },
   actions: {
     getTextFromImage ({ commit, rootState }, image) {
-      sharedAxios.post(rootState.baseUrl + 'extractText', image , { headers: {'content-Type': 'application/x-www-form-urlencoded' } })
+      sharedAxios.post(rootState.baseUrl + 'extractText', image, { headers: { 'content-Type': 'application/x-www-form-urlencoded' } })
         .then(response => {
           commit('setExtractedData', response.data)
+          commit('setReferences', undefined)
         })
         .catch(err => {
           Notification.error({ message: err.message })
         })
     },
     getReferencesFromText ({ commit, rootState }, textInfo) {
-      sharedAxios.post(rootState.baseUrl + 'extractReferences', textInfo, { headers: {'content-Type': 'application/x-www-form-urlencoded' } })
+      debugger
+      sharedAxios.post(rootState.baseUrl + 'extractReferences', textInfo, { headers: { 'content-Type': 'application/x-www-form-urlencoded' } })
         .then(response => {
+          console.log(response.data)
           commit('setReferences', response.data)
         })
         .catch(err => {

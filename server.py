@@ -22,10 +22,13 @@ def index():
     data = request.body.read()
     data = json.loads(data.decode())
     img_name = data.get('name', None)
-    path = 'C:/Users/Matheus/Downloads/'
+    path = 'C:/Users/Guilherme/Downloads/'
     inputPath = path+img_name
+    print(inputPath)
     outputPath = path + 'teste.png'
+    print(outputPath)
     result = ocr.imgToText(inputPath, outputPath, 'por')
+    #result = 'oi tudo bem'
     response.headers['Access-Control-Allow-Origin'] = '*'
     
     print(result)
@@ -45,6 +48,8 @@ def index():
     data = json.loads(data.decode())
     text = data.get('text', None)
     lang = data.get('lang', 'english')
+    
+    print(text)
     result = reference_services.get_results(text, language = lang )
     response.headers['Access-Control-Allow-Origin'] = '*'
     

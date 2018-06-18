@@ -39,7 +39,6 @@ export default {
     console.log(this.user[0].token)
   },
   methods: {
-    // ...mapActions('market', ['getMarketProducts']),
     ...mapActions('login', ['keepConnection'])
   },
   computed: {

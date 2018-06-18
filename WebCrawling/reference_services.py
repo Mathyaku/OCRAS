@@ -12,7 +12,8 @@ from WebCrawling import get_academic_sources as service
 
 def get_results(abstract = "", language = "english" ):
     
-    dict_sources = [service.findScieloReferences, service.findGoogleScholarReferences, service.findLinkSpringerReferences]
+    dict_sources = [service.findScieloReferences, service.findGoogleScholarReferences]
+#    , service.findLinkSpringerReferences
     print('getting results')
     
     quantity = 5
